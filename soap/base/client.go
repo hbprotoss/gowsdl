@@ -110,11 +110,12 @@ func NewSOAPClientWithWsse(url string, auth *SecurityAuth) *SOAPClient  {
 	}
 }
 
-func (s *SOAPClient) Call(soapAction string, request, response interface{}) error {
+func (s *SOAPClient) Call(soapAction string, request Request, response interface{}) error {
 	var envelope = &Envelope{}
 	if s.securityAuth != nil {
 		envelope = NewEnvelopeWithSecurity(s.securityAuth.Username, s.securityAuth.Password)
 	}
+	envelope.Namespace = request.Namespace()
 
 	envelope.Body.Content = request
 	buffer := new(bytes.Buffer)
@@ -141,9 +142,9 @@ func (s *SOAPClient) Call(soapAction string, request, response interface{}) erro
 	}
 
 	req.Header.Add("Content-Type", "text/xml; charset=\"utf-8\"")
-	if soapAction != "" {
-		req.Header.Add("SOAPAction", soapAction)
-	}
+	//if soapAction != "" {
+	//	req.Header.Add("SOAPAction", soapAction)
+	//}
 
 	req.Header.Set("User-Agent", "gowsdl/0.1")
 	req.Close = true
@@ -172,7 +173,7 @@ func (s *SOAPClient) Call(soapAction string, request, response interface{}) erro
 	}
 
 	log.Println(string(rawbody))
-	respEnvelope := new(Envelope)
+	respEnvelope := NewEnvelope()
 	respEnvelope.Body = &Body{Content: response}
 	err = xml.Unmarshal(rawbody, respEnvelope)
 	if err != nil {

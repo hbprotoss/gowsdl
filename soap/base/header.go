@@ -3,7 +3,7 @@ package base
 import "encoding/xml"
 
 type Header struct {
-	XMLName xml.Name `xml:"soapenv:Header"`
+	XMLName xml.Name `xml:"soap:Header"`
 
 	SecurityHeader *SecurityHeader
 }
@@ -22,7 +22,7 @@ type SecurityHeader struct {
 	XMLName xml.Name `xml:"wsse:Security"`
 	Wsse string `xml:"xmlns:wsse,attr"`
 	Wsu string `xml:"xmlns:wsu,attr"`
-	MustUnderstand string `xml:"soapenv:mustUnderstand,attr"`
+	MustUnderstand string `xml:"soap:mustUnderstand,attr"`
 
 	UsernameToken UsernameToken
 }
