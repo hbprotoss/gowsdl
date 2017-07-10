@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gowsdl/soap"
+	"gowsdl/enterprise"
 	"gowsdl/soap/req"
 	"gowsdl/soap/client"
 	"fmt"
@@ -12,7 +12,8 @@ func main() {
 	//var req = soap.NewGetEnterpriseRequest()
 	//req.UserId = 35910
 	//req.Local = "EN"
-	var request = soap.NewHelloRequest()
+	var request = enterprise.NewHelloRequest()
+	request.Message = "hahaha"
 
 	envelope.Body.Content = request
 
@@ -24,7 +25,7 @@ func main() {
 			Type: "PasswordText",
 		},
 	)
-	var response = soap.NewHelloResponse()
+	var response = enterprise.NewHelloResponse()
 
 	err := soapClient.Call("hello", request, response)
 	if err != nil {
