@@ -4,15 +4,18 @@ import "encoding/xml"
 
 type HelloRequest struct {
 	XMLName xml.Name `xml:"ns2:hello"`
+	ns string `xml:"-"`
 
 	Message string `xml:"message"`
 
 }
 
-func NewHelloRequest() *HelloRequest {
-	return &HelloRequest{}
+func NewHelloRequest(namespage string) *HelloRequest {
+	return &HelloRequest{
+		ns: namespage,
+	}
 }
 
 func (req *HelloRequest) Namespace() string {
-	return "http://service.enterprise.soa.gttown.com/"
+	return req.ns
 }
