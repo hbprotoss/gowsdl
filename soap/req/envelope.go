@@ -1,4 +1,4 @@
-package base
+package req
 
 import "encoding/xml"
 

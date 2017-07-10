@@ -1,43 +1,35 @@
 package main
 
 import (
-	"encoding/xml"
 	"gowsdl/soap"
-	soapbase "gowsdl/soap/base"
+	"gowsdl/soap/req"
+	"gowsdl/soap/client"
+	"fmt"
 )
 
 func main() {
-	var envelope = soapbase.NewEnvelopeWithSecurity("client", "GT666lucknumber")
-	//var request = soap.NewGetEnterpriseRequest()
-	//request.UserId = 35910
-	//request.Local = "EN"
+	var envelope = req.NewEnvelopeWithSecurity("client", "GT666lucknumber")
+	//var req = soap.NewGetEnterpriseRequest()
+	//req.UserId = 35910
+	//req.Local = "EN"
 	var request = soap.NewHelloRequest()
 
 	envelope.Body.Content = request
-	xmlText, err := xml.MarshalIndent(envelope, "", "\t")
-	if err != nil {
-		println(err)
-		return
-	}
-	println(string(xmlText))
 
-	var client = soapbase.NewSOAPClientWithWsse(
-		"http://127.0.0.1:8080/ws/hello",
-		&soapbase.SecurityAuth{
+	var soapClient = client.NewSOAPClientWithWsse(
+		"http://kf.egtcp.com:8080/gttown-enterprise-soa/ws/hello",
+		&client.SecurityAuth{
 			Username: "client",
 			Password: "GT666lucknumber",
 			Type: "PasswordText",
 		},
 	)
 	var response = soap.NewHelloResponse()
-	xmlText, err = xml.MarshalIndent(response, "", "\t")
+
+	err := soapClient.Call("hello", request, response)
 	if err != nil {
-		println(err)
+		fmt.Println(err)
 		return
 	}
-	println(string(xmlText))
-
-	client.Call("hello", request, response)
 	println(response)
 }
-

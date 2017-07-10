@@ -1,4 +1,4 @@
-package base
+package client
 
 
 import (
@@ -10,6 +10,9 @@ import (
 	"net"
 	"net/http"
 	"time"
+	"gowsdl/soap/req"
+	"errors"
+	"strings"
 )
 
 // against "unused imports"
@@ -40,60 +43,6 @@ type SOAPClient struct {
 	securityAuth *SecurityAuth
 }
 
-func (b *Body) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	if b.Content == nil {
-		return xml.UnmarshalError("Content must be a pointer to a struct")
-	}
-
-	var (
-		token    xml.Token
-		err      error
-		consumed bool
-	)
-
-Loop:
-	for {
-		if token, err = d.Token(); err != nil {
-			return err
-		}
-
-		if token == nil {
-			break
-		}
-
-		switch se := token.(type) {
-		case xml.StartElement:
-			if consumed {
-				return xml.UnmarshalError("Found multiple elements inside SOAP body; not wrapped-document/literal WS-I compliant")
-			} else if se.Name.Space == "http://schemas.xmlsoap.org/soap/envelope/" && se.Name.Local == "Fault" {
-				b.Fault = &Fault{}
-				b.Content = nil
-
-				err = d.DecodeElement(b.Fault, &se)
-				if err != nil {
-					return err
-				}
-
-				consumed = true
-			} else {
-				if err = d.DecodeElement(b.Content, &se); err != nil {
-					return err
-				}
-
-				consumed = true
-			}
-		case xml.EndElement:
-			break Loop
-		}
-	}
-
-	return nil
-}
-
-func (f *Fault) Error() string {
-	return f.String
-}
-
 func NewSOAPClient(url string, tls bool, auth *BasicAuth) *SOAPClient {
 	return &SOAPClient{
 		url:  url,
@@ -110,10 +59,10 @@ func NewSOAPClientWithWsse(url string, auth *SecurityAuth) *SOAPClient  {
 	}
 }
 
-func (s *SOAPClient) Call(soapAction string, request Request, response interface{}) error {
-	var envelope = &Envelope{}
+func (s *SOAPClient) Call(soapAction string, request req.Request, response interface{}) error {
+	var envelope = &req.Envelope{}
 	if s.securityAuth != nil {
-		envelope = NewEnvelopeWithSecurity(s.securityAuth.Username, s.securityAuth.Password)
+		envelope = req.NewEnvelopeWithSecurity(s.securityAuth.Username, s.securityAuth.Password)
 	}
 	envelope.Namespace = request.Namespace()
 
@@ -133,21 +82,21 @@ func (s *SOAPClient) Call(soapAction string, request Request, response interface
 
 	log.Println(buffer.String())
 
-	req, err := http.NewRequest("POST", s.url, buffer)
+	httpReq, err := http.NewRequest("POST", s.url, buffer)
 	if err != nil {
 		return err
 	}
 	if s.auth != nil {
-		req.SetBasicAuth(s.auth.Login, s.auth.Password)
+		httpReq.SetBasicAuth(s.auth.Login, s.auth.Password)
 	}
 
-	req.Header.Add("Content-Type", "text/xml; charset=\"utf-8\"")
+	httpReq.Header.Add("Content-Type", "text/xml; charset=\"utf-8\"")
 	//if soapAction != "" {
 	//	req.Header.Add("SOAPAction", soapAction)
 	//}
 
-	req.Header.Set("User-Agent", "gowsdl/0.1")
-	req.Close = true
+	httpReq.Header.Set("User-Agent", "gowsdl/0.1")
+	httpReq.Close = true
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{
@@ -156,8 +105,8 @@ func (s *SOAPClient) Call(soapAction string, request Request, response interface
 		Dial: dialTimeout,
 	}
 
-	client := &http.Client{Transport: tr}
-	res, err := client.Do(req)
+	httpClient := &http.Client{Transport: tr}
+	res, err := httpClient.Do(httpReq)
 	if err != nil {
 		return err
 	}
@@ -173,17 +122,31 @@ func (s *SOAPClient) Call(soapAction string, request Request, response interface
 	}
 
 	log.Println(string(rawbody))
-	respEnvelope := NewEnvelope()
-	respEnvelope.Body = &Body{Content: response}
-	err = xml.Unmarshal(rawbody, respEnvelope)
+	respEnvelope := req.NewEnvelope()
+	respEnvelope.Body = &req.Body{Content: response}
+	err = xml.Unmarshal([]byte(parseSoapData(string(rawbody))), respEnvelope)
 	if err != nil {
 		return err
 	}
 
 	fault := respEnvelope.Body.Fault
 	if fault != nil {
-		return fault
+		return errors.New("Soap error occurred")
 	}
 
 	return nil
+}
+
+func parseSoapData(rawbody string) string {
+	var begin = strings.Index(rawbody, "<soap")
+	if begin == -1 {
+		return rawbody
+	}
+
+	var end = strings.LastIndex(rawbody, "--uuid")
+	if end == -1 {
+		return rawbody
+	}
+
+	return rawbody[begin:end]
 }

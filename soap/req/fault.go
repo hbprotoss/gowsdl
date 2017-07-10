@@ -1,4 +1,4 @@
-package base
+package req
 
 import "encoding/xml"
 
@@ -10,3 +10,8 @@ type Fault struct {
 	Actor  string `xml:"faultactor,omitempty"`
 	Detail string `xml:"detail,omitempty"`
 }
+
+func (f *Fault) Error() string {
+	return f.String
+}
+

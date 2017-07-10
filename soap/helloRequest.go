@@ -14,5 +14,5 @@ func NewHelloRequest() *HelloRequest {
 }
 
 func (req *HelloRequest) Namespace() string {
-	return "http://service.server.soa.demo.hbprotoss.io/"
+	return "http://service.enterprise.soa.gttown.com/"
 }

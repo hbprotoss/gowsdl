@@ -3,15 +3,16 @@ package soap
 import "encoding/xml"
 
 type HelloResponse struct {
-	XMLName xml.Name `xml:"ns2:helloResponse"`
+	XMLName xml.Name `xml:"helloResponse"`
 	Namespace string `xml:"xmlns:ns2,attr"`
 
 	Return *HelloResponseData `xml:"return"`
 }
 
 type HelloResponseData struct {
-	Id int32
-	Message string
+	XMLName xml.Name `xml:"return"`
+	Id int64		`xml:"id"`
+	Message string	`xml:"message"`
 }
 
 func NewHelloResponse() *HelloResponse {
