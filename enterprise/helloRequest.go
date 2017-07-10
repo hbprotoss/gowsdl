@@ -10,9 +10,9 @@ type HelloRequest struct {
 
 }
 
-func NewHelloRequest(namespage string) *HelloRequest {
+func NewHelloRequest(namespace string) *HelloRequest {
 	return &HelloRequest{
-		ns: namespage,
+		ns: namespace,
 	}
 }
 

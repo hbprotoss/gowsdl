@@ -2,16 +2,16 @@ package enterprise
 
 import "encoding/xml"
 
-type HelloResponse struct {
+type HelloListResponse struct {
 	XMLName   xml.Name `xml:"helloResponse"`
 
-	Return struct {
+	Return []struct {
 		Id      int64        `xml:"id"`
 		Message string    `xml:"message"`
 	} `xml:"return"`
 }
 
-func NewHelloResponse() *HelloResponse {
-	return &HelloResponse{
+func NewHelloListResponse() *HelloListResponse {
+	return &HelloListResponse{
 	}
 }

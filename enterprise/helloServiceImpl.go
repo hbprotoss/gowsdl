@@ -6,17 +6,17 @@ import (
 	"gowsdl/soap/req"
 )
 
-type HelloService struct {
+type DefaultHelloService struct {
 	Namespace string
 }
 
-func NewHelloService() *HelloService {
-	return &HelloService{
+func NewHelloService() *DefaultHelloService {
+	return &DefaultHelloService{
 		Namespace: "http://service.enterprise.soa.gttown.com/",
 	}
 }
 
-func (s *HelloService) Hello(message string) (*HelloResponse, error) {
+func (s *DefaultHelloService) Hello(message string) (*HelloResponse, error) {
 	var envelope = req.NewEnvelopeWithSecurity("client", "GT666lucknumber")
 	var request = NewHelloRequest("http://service.enterprise.soa.gttown.com/")
 	request.Message = message
