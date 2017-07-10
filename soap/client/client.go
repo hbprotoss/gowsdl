@@ -14,6 +14,7 @@ import (
 	"errors"
 	"strings"
 	"gowsdl/soap/resp"
+	"fmt"
 )
 
 // against "unused imports"
@@ -124,7 +125,7 @@ func (s *SOAPClient) Call(soapAction string, request req.Request, response inter
 
 	fault := respEnvelope.Body.Fault
 	if fault != nil {
-		return errors.New("Soap error occurred")
+		return errors.New(fmt.Sprintf("Soap Error: code(%s), message(%s)", fault.Code, fault.String))
 	}
 
 	return nil

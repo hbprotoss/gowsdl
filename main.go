@@ -13,7 +13,7 @@ func main() {
 	//req.UserId = 35910
 	//req.Local = "EN"
 	var request = enterprise.NewHelloRequest()
-	request.Message = "hahaha"
+	request.Message = "error"
 
 	envelope.Body.Content = request
 
