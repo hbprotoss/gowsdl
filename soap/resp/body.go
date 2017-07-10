@@ -1,10 +1,11 @@
-package req
+package resp
 
 import "encoding/xml"
 
 type Body struct {
-	XMLName xml.Name `xml:"soap:Body"`
+	XMLName xml.Name `xml:"Body"`
 
+	Fault   *Fault      `xml:",omitempty"`
 	Content interface{} `xml:",omitempty"`
 }
 
@@ -33,6 +34,16 @@ Loop:
 		case xml.StartElement:
 			if consumed {
 				return xml.UnmarshalError("Found multiple elements inside SOAP body; not wrapped-document/literal WS-I compliant")
+			} else if se.Name.Space == "http://schemas.xmlsoap.org/soap/envelope/" && se.Name.Local == "Fault" {
+				b.Fault = &Fault{}
+				b.Content = nil
+
+				err = d.DecodeElement(b.Fault, &se)
+				if err != nil {
+					return err
+				}
+
+				consumed = true
 			} else {
 				if err = d.DecodeElement(b.Content, &se); err != nil {
 					return err

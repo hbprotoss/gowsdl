@@ -13,6 +13,7 @@ import (
 	"gowsdl/soap/req"
 	"errors"
 	"strings"
+	"gowsdl/soap/resp"
 )
 
 // against "unused imports"
@@ -41,14 +42,6 @@ type SOAPClient struct {
 	tls  bool
 	auth *BasicAuth
 	securityAuth *SecurityAuth
-}
-
-func NewSOAPClient(url string, tls bool, auth *BasicAuth) *SOAPClient {
-	return &SOAPClient{
-		url:  url,
-		tls:  tls,
-		auth: auth,
-	}
 }
 
 func NewSOAPClientWithWsse(url string, auth *SecurityAuth) *SOAPClient  {
@@ -122,8 +115,8 @@ func (s *SOAPClient) Call(soapAction string, request req.Request, response inter
 	}
 
 	log.Println(string(rawbody))
-	respEnvelope := req.NewEnvelope()
-	respEnvelope.Body = &req.Body{Content: response}
+	respEnvelope := resp.NewEnvelope()
+	respEnvelope.Body = &resp.Body{Content: response}
 	err = xml.Unmarshal([]byte(parseSoapData(string(rawbody))), respEnvelope)
 	if err != nil {
 		return err

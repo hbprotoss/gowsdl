@@ -1,4 +1,4 @@
-package req
+package resp
 
 import "encoding/xml"
 
