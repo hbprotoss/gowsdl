@@ -1,20 +1,19 @@
 package client
 
-
 import (
 	"bytes"
 	"crypto/tls"
 	"encoding/xml"
+	"errors"
+	"fmt"
+	"gowsdl/soap/req"
+	"gowsdl/soap/resp"
 	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
-	"time"
-	"gowsdl/soap/req"
-	"errors"
 	"strings"
-	"gowsdl/soap/resp"
-	"fmt"
+	"time"
 )
 
 // against "unused imports"
@@ -35,20 +34,20 @@ type BasicAuth struct {
 type SecurityAuth struct {
 	Username string
 	Password string
-	Type string
+	Type     string
 }
 
 type SOAPClient struct {
-	url  string
-	tls  bool
-	auth *BasicAuth
+	url          string
+	tls          bool
+	auth         *BasicAuth
 	securityAuth *SecurityAuth
 }
 
-func NewSOAPClientWithWsse(url string, auth *SecurityAuth) *SOAPClient  {
+func NewSOAPClientWithWsse(url string, auth *SecurityAuth) *SOAPClient {
 	return &SOAPClient{
-		url: url,
-		tls: false,
+		url:          url,
+		tls:          false,
 		securityAuth: auth,
 	}
 }

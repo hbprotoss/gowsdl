@@ -14,4 +14,3 @@ type Fault struct {
 func (f *Fault) Error() string {
 	return f.String
 }
-

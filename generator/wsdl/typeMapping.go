@@ -1,7 +1,7 @@
 package wsdl
 
-var typeMapping = map[string]string {
-	"string": "string",
+var typeMapping = map[string]string{
+	"string":           "string",
 	"normalizedString": "string",
-	"token": "string",
+	"token":            "string",
 }

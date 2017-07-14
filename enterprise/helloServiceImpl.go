@@ -28,7 +28,7 @@ func (s *DefaultHelloService) Hello(message string) (*HelloResponse, error) {
 		&client.SecurityAuth{
 			Username: "client",
 			Password: "GT666lucknumber",
-			Type: "PasswordText",
+			Type:     "PasswordText",
 		},
 	)
 	var response = NewHelloResponse()

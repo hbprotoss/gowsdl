@@ -1,8 +1,8 @@
 package main
 
 import (
-	"gowsdl/enterprise"
 	"fmt"
+	"gowsdl/enterprise"
 )
 
 func main() {
