@@ -1,5 +1,7 @@
 package wsdl
 
+import "strings"
+
 var typeMapping = map[string]string{
 	// string
 	"string":           "string",
@@ -19,4 +21,13 @@ var typeMapping = map[string]string{
 	// misc
 	"boolean": "bool",
 	"any":     "interface{}",
+}
+
+func GetType(rawType string) string {
+	types := strings.Split(rawType, ":")
+	if len(types) == 1 {
+		return types[0]
+	} else {
+		return types[1]
+	}
 }
