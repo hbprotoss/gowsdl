@@ -37,6 +37,6 @@ func GetType(rawType string) string {
 	if ret := typeMapping[typeName]; ret != "" {
 		return ret
 	} else {
-		return util.FirstLetterToUpper(typeName)
+		return "*" + util.FirstLetterToUpper(typeName)
 	}
 }
