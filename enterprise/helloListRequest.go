@@ -4,10 +4,9 @@ import "encoding/xml"
 
 type HelloListRequest struct {
 	XMLName xml.Name `xml:"ns2:hello"`
-	ns string `xml:"-"`
+	ns      string   `xml:"-"`
 
 	Message []string `xml:"message"`
-
 }
 
 func NewHelloListRequest(namespace string) *HelloListRequest {
