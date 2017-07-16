@@ -55,7 +55,8 @@ func main() {
 		os.Mkdir(sourcePath, os.ModePerm)
 	}
 
-	definitions, err := wsdl.NewDefinitionsFromUrl("http://kf.egtcp.com:8080/gttown-enterprise-soa/ws/hello?wsdl")
+	var url = "http://kf.egtcp.com:8080/gttown-enterprise-soa/ws/hello?wsdl"
+	definitions, err := wsdl.NewDefinitionsFromUrl(url)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -70,7 +71,7 @@ func main() {
 		}
 
 		fmt.Printf("name: %s\n", complexType.Name)
-		file, err := os.Create(fmt.Sprintf("%s/%s.go", sourcePath, complexType.Name))
+		file, err := os.Create(fmt.Sprintf("%s%s%s.go", sourcePath, os.PathSeparator, complexType.Name))
 		if err != nil {
 			fmt.Printf("Init() error: %v\n", err)
 			return
