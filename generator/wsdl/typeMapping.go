@@ -28,6 +28,11 @@ func GetType(rawType string) string {
 	if len(types) == 1 {
 		return types[0]
 	} else {
-		return typeMapping[types[1]]
+		var ret = typeMapping[types[1]]
+		if ret == "" {
+			return types[1]
+		} else {
+			return ret
+		}
 	}
 }

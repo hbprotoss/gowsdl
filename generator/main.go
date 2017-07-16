@@ -5,7 +5,6 @@ import (
 	"gowsdl/generator/wsdl"
 	"os"
 	"text/template"
-	"strings"
 	"bytes"
 	"unicode"
 )
@@ -16,7 +15,7 @@ var (
 
 
 func Init() (err error) {
-	requestTpl, err = template.New("requestTpl").Parse(requestTplText)
+	requestTpl, err = template.New("requestTpl").Parse(wsdl.RequestTplText)
 	if err != nil {
 		return
 	}
@@ -45,9 +44,6 @@ func main() {
 	fmt.Println(elementMapping)
 
 	for _, complexType := range definitions.Types.Schema.ComplexType {
-		if strings.HasSuffix(complexType.Name, "Response") {
-			continue
-		}
 
 		fmt.Printf("name: %s\n", complexType.Name)
 		file, err := os.Create(fmt.Sprintf("%s%s%s.go", sourcePath, string(os.PathSeparator), complexType.Name))
@@ -57,7 +53,8 @@ func main() {
 		}
 
 		data := make(map[string]string)
-		data["name"] = firstLetterToUpper(complexType.Name)
+		data["name"] = complexType.Name
+		data["fieldName"] = firstLetterToUpper(complexType.Name)
 		data["members"] = generateMembers(complexType.Sequence)
 		err = requestTpl.Execute(file, data)
 		file.Close()
@@ -76,7 +73,12 @@ func generateMembers(sequence *wsdl.Sequence) string {
 			continue
 		}
 		var fieldName = firstLetterToUpper(element.Name)
-		var member = fmt.Sprintf("\t%s %s `xml:\"%s\"`\n", fieldName, wsdl.GetType(element.Type), element.Name)
+		var member = fmt.Sprintf(
+			"\t%s %s `xml:\"%s\"`\n",
+			fieldName,
+			firstLetterToUpper(wsdl.GetType(element.Type)),
+			element.Name,
+		)
 		buffer.WriteString(member)
 	}
 	return buffer.String()
