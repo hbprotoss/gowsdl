@@ -6,20 +6,22 @@ const (
 
 import "encoding/xml"
 
-type {{.fieldName}} struct {
+type {{.structName}} struct {
 	XMLName xml.Name ` + "`" + `xml:"ns2:{{.name}}"` + "`" + `
 	ns      string   ` + "`" + `xml:"-"` + "`" + `
 
-{{.members}}
+	{{range $index, $element := .members -}}
+	{{.FieldName}} {{.FieldType}} ` + "`xml:\"{{.XmlName}}\"`" + `
+	{{end}}
 }
 
-func New{{.fieldName}}(namespace string) *{{.fieldName}} {
-	return &{{.fieldName}}{
+func New{{.structName}}(namespace string) *{{.structName}} {
+	return &{{.structName}}{
 		ns: namespace,
 	}
 }
 
-func (req *{{.fieldName}}) Namespace() string {
+func (req *{{.structName}}) Namespace() string {
 	return req.ns
 }`
 )

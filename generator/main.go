@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"gowsdl/generator/util"
 	"gowsdl/generator/wsdl"
@@ -57,10 +56,10 @@ func generateEntity(complexTypes []wsdl.ComplexType, sourcePath string) {
 			return
 		}
 
-		data := make(map[string]string)
+		data := make(map[string]interface{})
 		data["package"] = packageName
 		data["name"] = complexType.Name
-		data["fieldName"] = util.FirstLetterToUpper(complexType.Name)
+		data["structName"] = util.FirstLetterToUpper(complexType.Name)
 		data["members"] = generateMembers(complexType.Sequence)
 		err = entityTpl.Execute(file, data)
 		file.Close()
@@ -71,21 +70,19 @@ func generateEntity(complexTypes []wsdl.ComplexType, sourcePath string) {
 	}
 }
 
-func generateMembers(sequence *wsdl.Sequence) string {
-	var buffer bytes.Buffer
-	for _, element := range sequence.Element {
+func generateMembers(sequence *wsdl.Sequence) (fields []wsdl.StructField) {
+	fields = make([]wsdl.StructField, len(sequence.Element))
+	for index, element := range sequence.Element {
 		if element.Name == "" {
 			fmt.Println("Element name is empty")
 			continue
 		}
-		var fieldName = util.FirstLetterToUpper(element.Name)
-		var member = fmt.Sprintf(
-			"\t%s %s `xml:\"%s\"`\n",
-			fieldName,
-			wsdl.GetType(element.Type),
-			element.Name,
-		)
-		buffer.WriteString(member)
+		var field = wsdl.StructField{
+			FieldName: util.FirstLetterToUpper(element.Name),
+			FieldType: wsdl.GetType(element.Type),
+			XmlName:   element.Name,
+		}
+		fields[index] = field
 	}
-	return buffer.String()
+	return
 }
