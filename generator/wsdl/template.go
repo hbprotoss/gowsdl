@@ -1,8 +1,8 @@
 package wsdl
 
 const (
-	// Request Template
-	RequestTplText = `package {{.package}}
+	// Entity Template
+	EntityTplText = `package {{.package}}
 
 import "encoding/xml"
 

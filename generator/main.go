@@ -11,11 +11,11 @@ import (
 )
 
 var (
-	requestTpl *template.Template
+	entityTpl *template.Template
 )
 
 func Init() (err error) {
-	requestTpl, err = template.New("requestTpl").Parse(wsdl.RequestTplText)
+	entityTpl, err = template.New("entityTpl").Parse(wsdl.EntityTplText)
 	if err != nil {
 		return
 	}
@@ -59,7 +59,7 @@ func main() {
 		data["name"] = complexType.Name
 		data["fieldName"] = firstLetterToUpper(complexType.Name)
 		data["members"] = generateMembers(complexType.Sequence)
-		err = requestTpl.Execute(file, data)
+		err = entityTpl.Execute(file, data)
 		file.Close()
 		if err != nil {
 			fmt.Println(err)
