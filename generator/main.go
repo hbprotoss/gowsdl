@@ -3,11 +3,11 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"gowsdl/generator/util"
 	"gowsdl/generator/wsdl"
 	"os"
 	"path/filepath"
 	"text/template"
-	"unicode"
 )
 
 var (
@@ -57,7 +57,7 @@ func main() {
 		data := make(map[string]string)
 		data["package"] = packageName
 		data["name"] = complexType.Name
-		data["fieldName"] = firstLetterToUpper(complexType.Name)
+		data["fieldName"] = util.FirstLetterToUpper(complexType.Name)
 		data["members"] = generateMembers(complexType.Sequence)
 		err = entityTpl.Execute(file, data)
 		file.Close()
@@ -75,20 +75,14 @@ func generateMembers(sequence *wsdl.Sequence) string {
 			fmt.Println("Element name is empty")
 			continue
 		}
-		var fieldName = firstLetterToUpper(element.Name)
+		var fieldName = util.FirstLetterToUpper(element.Name)
 		var member = fmt.Sprintf(
 			"\t%s %s `xml:\"%s\"`\n",
 			fieldName,
-			firstLetterToUpper(wsdl.GetType(element.Type)),
+			wsdl.GetType(element.Type),
 			element.Name,
 		)
 		buffer.WriteString(member)
 	}
 	return buffer.String()
-}
-
-func firstLetterToUpper(s string) string {
-	runes := []rune(s)
-	runes[0] = unicode.ToUpper(runes[0])
-	return string(runes)
 }

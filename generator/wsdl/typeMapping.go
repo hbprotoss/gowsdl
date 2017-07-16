@@ -1,6 +1,9 @@
 package wsdl
 
-import "strings"
+import (
+	"gowsdl/generator/util"
+	"strings"
+)
 
 var typeMapping = map[string]string{
 	// string
@@ -25,14 +28,15 @@ var typeMapping = map[string]string{
 
 func GetType(rawType string) string {
 	types := strings.Split(rawType, ":")
+	var typeName = ""
 	if len(types) == 1 {
-		return types[0]
+		typeName = types[0]
 	} else {
-		var ret = typeMapping[types[1]]
-		if ret == "" {
-			return types[1]
-		} else {
-			return ret
-		}
+		typeName = types[1]
+	}
+	if ret := typeMapping[typeName]; ret != "" {
+		return ret
+	} else {
+		return util.FirstLetterToUpper(typeName)
 	}
 }
