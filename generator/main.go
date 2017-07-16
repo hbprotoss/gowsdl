@@ -22,6 +22,7 @@ import "encoding/xml"
 type {{.name}} struct {
 	XMLName xml.Name ` + "`" + `xml:"ns2:{{.name}}"` + "`" + `
 	ns      string   ` + "`" + `xml:"-"` + "`" + `
+
 {{.members}}
 }
 
@@ -50,12 +51,12 @@ func main() {
 		return
 	}
 
-	var sourcePath = "/tmp/source"
+	var sourcePath = os.Args[2]
 	if _, err := os.Stat(sourcePath); os.IsNotExist(err) {
 		os.Mkdir(sourcePath, os.ModePerm)
 	}
 
-	var url = "http://kf.egtcp.com:8080/gttown-enterprise-soa/ws/hello?wsdl"
+	var url = os.Args[1]
 	definitions, err := wsdl.NewDefinitionsFromUrl(url)
 	if err != nil {
 		fmt.Println(err)
@@ -71,14 +72,14 @@ func main() {
 		}
 
 		fmt.Printf("name: %s\n", complexType.Name)
-		file, err := os.Create(fmt.Sprintf("%s%s%s.go", sourcePath, os.PathSeparator, complexType.Name))
+		file, err := os.Create(fmt.Sprintf("%s%s%s.go", sourcePath, string(os.PathSeparator), complexType.Name))
 		if err != nil {
 			fmt.Printf("Init() error: %v\n", err)
 			return
 		}
 
 		data := make(map[string]string)
-		data["name"] = complexType.Name
+		data["name"] = firstLetterToUpper(complexType.Name)
 		data["members"] = generateMembers(complexType.Sequence)
 		err = requestTpl.Execute(file, data)
 		file.Close()
@@ -97,7 +98,7 @@ func generateMembers(sequence *wsdl.Sequence) string {
 			continue
 		}
 		var fieldName = firstLetterToUpper(element.Name)
-		var member = fmt.Sprintf("%s %s `xml:\"%s\"`\n", fieldName, wsdl.GetType(element.Type), element.Name)
+		var member = fmt.Sprintf("\t%s %s `xml:\"%s\"`\n", fieldName, wsdl.GetType(element.Type), element.Name)
 		buffer.WriteString(member)
 	}
 	return buffer.String()
