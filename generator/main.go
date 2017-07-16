@@ -33,8 +33,6 @@ func main() {
 		os.Mkdir(sourcePath, os.ModePerm)
 	}
 
-	var packageName = filepath.Base(sourcePath)
-
 	var url = os.Args[1]
 	definitions, err := wsdl.NewDefinitionsFromUrl(url)
 	if err != nil {
@@ -45,7 +43,12 @@ func main() {
 	var elementMapping = wsdl.NewElementMappingFromDefinitions(definitions)
 	fmt.Println(elementMapping)
 
-	for _, complexType := range definitions.Types.Schema.ComplexType {
+	generateEntity(definitions.Types.Schema.ComplexType, sourcePath)
+}
+
+func generateEntity(complexTypes []wsdl.ComplexType, sourcePath string) {
+	var packageName = filepath.Base(sourcePath)
+	for _, complexType := range complexTypes {
 
 		fmt.Printf("name: %s\n", complexType.Name)
 		file, err := os.Create(fmt.Sprintf("%s%s%s.go", sourcePath, string(os.PathSeparator), complexType.Name))
