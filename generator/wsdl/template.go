@@ -11,7 +11,7 @@ type {{.structName}} struct {
 	ns      string   ` + "`" + `xml:"-"` + "`" + `
 
 	{{range $index, $element := .members -}}
-	{{.FieldName}} {{.FieldType}} ` + "`xml:\"{{.XmlName}}\"`" + `
+	{{.Name}} {{.Type}} ` + "`xml:\"{{.XmlName}}\"`" + `
 	{{end}}
 }
 
@@ -23,5 +23,14 @@ func New{{.structName}}(namespace string) *{{.structName}} {
 
 func (req *{{.structName}}) Namespace() string {
 	return req.ns
+}`
+
+	// Interface Template
+	InterfaceTplText = `package {{.package}}
+
+type {{.serviceName}} interface {
+	{{range $index, $element := .methods -}}
+	{{.Name}}({{.Params}}) ({{.Returns}}, error)
+	{{end}}
 }`
 )

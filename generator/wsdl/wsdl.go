@@ -55,26 +55,27 @@ type Operation struct {
 }
 
 type Input struct {
-	Message string `xml:"message"`
-	Name    string `xml:"name"`
+	Message string `xml:"message,attr"`
+	Name    string `xml:"name,attr"`
 }
 
 type Output struct {
-	Message string `xml:"message"`
-	Name    string `xml:"name"`
+	Message string `xml:"message,attr"`
+	Name    string `xml:"name,attr"`
 }
 
 type Service struct {
-	Name string `xml:"name"`
+	Name string `xml:"name,attr"`
 	Port *Port  `xml:"port"`
 }
 
 type Port struct {
 	Binding string `xml:"binding"`
-	Name    string `xml:"name"`
+	Name    string `xml:"name,attr"`
 }
 
 type PortType struct {
+	Name      string      `xml:"name,attr"`
 	Operation []Operation `xml:"operation"`
 }
 

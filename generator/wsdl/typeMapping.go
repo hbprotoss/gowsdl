@@ -2,7 +2,6 @@ package wsdl
 
 import (
 	"gowsdl/generator/util"
-	"strings"
 )
 
 var typeMapping = map[string]string{
@@ -27,14 +26,12 @@ var typeMapping = map[string]string{
 }
 
 func GetType(rawType string) string {
-	types := strings.Split(rawType, ":")
-	var typeName = ""
-	if len(types) == 1 {
-		typeName = types[0]
-	} else {
-		typeName = types[1]
-	}
-	if ret := typeMapping[typeName]; ret != "" {
+	return typeMapping[rawType]
+}
+
+func GetTypeWithUpperEntity(rawType string) string {
+	var typeName = util.GetEntityName(rawType)
+	if ret := GetType(rawType); ret != "" {
 		return ret
 	} else {
 		return util.FirstLetterToUpper(typeName)
