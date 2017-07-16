@@ -1,15 +1,14 @@
 package wsdl
 
-
 type ElementMapping struct {
-	ComplexType   map[string]ComplexType
-	Operation map[string]Operation
+	ComplexType map[string]ComplexType
+	Operation   map[string]Operation
 }
 
 func NewElementMapping() *ElementMapping {
 	return &ElementMapping{
-		ComplexType:   make(map[string]ComplexType),
-		Operation: make(map[string]Operation),
+		ComplexType: make(map[string]ComplexType),
+		Operation:   make(map[string]Operation),
 	}
 }
 

@@ -1,19 +1,18 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"gowsdl/generator/wsdl"
 	"os"
-	"text/template"
-	"bytes"
-	"unicode"
 	"path/filepath"
+	"text/template"
+	"unicode"
 )
 
 var (
 	requestTpl *template.Template
 )
-
 
 func Init() (err error) {
 	requestTpl, err = template.New("requestTpl").Parse(wsdl.RequestTplText)

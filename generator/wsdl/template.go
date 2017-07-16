@@ -2,8 +2,7 @@ package wsdl
 
 const (
 	// Request Template
-	RequestTplText =
-`package {{.package}}
+	RequestTplText = `package {{.package}}
 
 import "encoding/xml"
 
@@ -23,5 +22,4 @@ func New{{.fieldName}}(namespace string) *{{.fieldName}} {
 func (req *{{.fieldName}}) Namespace() string {
 	return req.ns
 }`
-
 )
