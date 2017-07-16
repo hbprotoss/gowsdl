@@ -85,9 +85,6 @@ func (s *SOAPClient) Call(soapAction string, request req.Request, response inter
 	}
 
 	httpReq.Header.Add("Content-Type", "text/xml; charset=\"utf-8\"")
-	//if soapAction != "" {
-	//	req.Header.Add("SOAPAction", soapAction)
-	//}
 
 	httpReq.Header.Set("User-Agent", "gowsdl/0.1")
 	httpReq.Close = true

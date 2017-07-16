@@ -7,33 +7,27 @@ import (
 )
 
 type DefaultHelloService struct {
-	Namespace string
+	Namespace  string
+	soapClient *client.SOAPClient
 }
 
-func NewHelloService() *DefaultHelloService {
+func NewHelloService(url string, auth *client.SecurityAuth) *DefaultHelloService {
 	return &DefaultHelloService{
-		Namespace: "http://service.enterprise.soa.gttown.com/",
+		Namespace:  "http://service.server.soa.demo.hbprotoss.io/",
+		soapClient: client.NewSOAPClientWithWsse(url, auth),
 	}
 }
 
 func (s *DefaultHelloService) Hello(message string) (*HelloResponse, error) {
-	var envelope = req.NewEnvelopeWithSecurity("client", "GT666lucknumber")
-	var request = NewHelloRequest("http://service.enterprise.soa.gttown.com/")
+	var envelope = req.NewEnvelope()
+	var request = NewHelloRequest(s.Namespace)
 	request.Message = message
 
 	envelope.Body.Content = request
 
-	var soapClient = client.NewSOAPClientWithWsse(
-		"http://kf.egtcp.com:8080/gttown-enterprise-soa/ws/hello",
-		&client.SecurityAuth{
-			Username: "client",
-			Password: "GT666lucknumber",
-			Type: "PasswordText",
-		},
-	)
 	var response = NewHelloResponse()
 
-	err := soapClient.Call("hello", request, response)
+	err := s.soapClient.Call("hello", request, response)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
