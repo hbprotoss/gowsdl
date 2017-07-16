@@ -82,6 +82,9 @@ func generateMembers(sequence *wsdl.Sequence) (fields []wsdl.StructField) {
 			FieldType: wsdl.GetType(element.Type),
 			XmlName:   element.Name,
 		}
+		if element.MaxOccurs == "unbounded" {
+			field.FieldType = "[]" + field.FieldType
+		}
 		fields[index] = field
 	}
 	return
