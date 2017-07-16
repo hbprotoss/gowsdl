@@ -3,7 +3,7 @@ package wsdl
 const (
 	// Request Template
 	RequestTplText =
-`package enterprise
+`package {{.package}}
 
 import "encoding/xml"
 

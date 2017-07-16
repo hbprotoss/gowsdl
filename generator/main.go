@@ -7,6 +7,7 @@ import (
 	"text/template"
 	"bytes"
 	"unicode"
+	"path/filepath"
 )
 
 var (
@@ -33,6 +34,8 @@ func main() {
 		os.Mkdir(sourcePath, os.ModePerm)
 	}
 
+	var packageName = filepath.Base(sourcePath)
+
 	var url = os.Args[1]
 	definitions, err := wsdl.NewDefinitionsFromUrl(url)
 	if err != nil {
@@ -53,6 +56,7 @@ func main() {
 		}
 
 		data := make(map[string]string)
+		data["package"] = packageName
 		data["name"] = complexType.Name
 		data["fieldName"] = firstLetterToUpper(complexType.Name)
 		data["members"] = generateMembers(complexType.Sequence)
