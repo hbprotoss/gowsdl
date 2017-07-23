@@ -6,12 +6,12 @@ import (
 	"gowsdl/generator/wsdl"
 	"os"
 	"path/filepath"
-	"text/template"
 	"strings"
+	"text/template"
 )
 
 var (
-	entityTpl *template.Template
+	entityTpl    *template.Template
 	interfaceTpl *template.Template
 )
 
@@ -115,7 +115,7 @@ func generateTypeDefs(sequence *wsdl.Sequence) string {
 				paramType = "*" + util.FirstLetterToUpper(elementType)
 			}
 		}
-		params[index] = fmt.Sprintf("%s %s", element.Name, paramType)
+		params[index] = fmt.Sprintf("%s %s", util.FirstLetterToLower(elementType), paramType)
 	}
 	return strings.Join(params, ", ")
 }
@@ -155,7 +155,7 @@ func generateEntityMembers(sequence *wsdl.Sequence) (members []wsdl.EntityMember
 		}
 		var member = wsdl.EntityMember{
 			Name:    util.FirstLetterToUpper(element.Name),
-			Type:    wsdl.GetTypeWithUpperEntity(element.Type),
+			Type:    "*" + wsdl.GetTypeWithUpperEntity(element.Type),
 			XmlName: element.Name,
 		}
 		if element.MaxOccurs == "unbounded" {
