@@ -32,6 +32,8 @@ type Schema struct {
 type ComplexType struct {
 	Name     string    `xml:"name,attr"`
 	Sequence *Sequence `xml:"sequence"`
+
+	IsRequestType bool
 }
 
 type Sequence struct {

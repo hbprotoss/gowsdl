@@ -3,11 +3,14 @@ package wsdl
 const (
 	// Entity Template
 	EntityTplText = `package {{.package}}
-
+{{if .isRequestEntity -}}
 import "encoding/xml"
+{{end -}}
 
 type {{.structName}} struct {
+	{{if .isRequestEntity -}}
 	XMLName xml.Name ` + "`" + `xml:"ns2:{{.name}}"` + "`" + `
+	{{end -}}
 	ns      string   ` + "`" + `xml:"-"` + "`" + `
 
 	{{range $index, $element := .members -}}

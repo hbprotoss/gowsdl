@@ -21,4 +21,17 @@ func main() {
 		return
 	}
 	fmt.Println(response)
+
+	response2, err2 := service.HelloList([]string{"h1", "h2"})
+	if err2 != nil {
+		fmt.Println(err2)
+		return
+	}
+	fmt.Println(response2)
+
+	err3 := service.HelloMulti("haha", &temp.Entity{Id: 123, Message: "1231231"}, []int32{1, 2}, []int32{1, 2})
+	if err3 != nil {
+		fmt.Println(err3)
+		return
+	}
 }

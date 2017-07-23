@@ -179,6 +179,7 @@ func generateEntity(definitions *wsdl.Definitions, sourceRoot string) {
 		data["name"] = complexType.Name
 		data["structName"] = util.FirstLetterToUpper(complexType.Name)
 		data["members"] = generateEntityMembers(complexType.Sequence)
+		data["isRequestEntity"] = complexType.IsRequestType
 		err = entityTpl.Execute(file, data)
 		file.Close()
 		if err != nil {

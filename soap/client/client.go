@@ -114,7 +114,8 @@ func (s *SOAPClient) Call(soapAction string, request req.Request, response inter
 	log.Println(string(rawbody))
 	respEnvelope := resp.NewEnvelope()
 	respEnvelope.Body = &resp.Body{Content: response}
-	err = xml.Unmarshal([]byte(parseSoapData(string(rawbody))), respEnvelope)
+	var body = parseSoapData(string(rawbody))
+	err = xml.Unmarshal([]byte(body), respEnvelope)
 	if err != nil {
 		return err
 	}

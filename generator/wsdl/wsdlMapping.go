@@ -1,5 +1,7 @@
 package wsdl
 
+import "gowsdl/generator/util"
+
 type ElementMapping struct {
 	ComplexType map[string]*ComplexType
 	Operation   map[string]*Operation
@@ -19,6 +21,8 @@ func NewElementMappingFromDefinitions(definitions *Definitions) *ElementMapping 
 	}
 	for _, operation := range definitions.PortType.Operation {
 		mapping.Operation[operation.Name] = operation
+		var inputType = util.GetEntityName(operation.Input.Message)
+		mapping.ComplexType[inputType].IsRequestType = true
 	}
 	return mapping
 }
