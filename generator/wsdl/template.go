@@ -30,7 +30,7 @@ func (req *{{.structName}}) Namespace() string {
 
 type {{.serviceName}} interface {
 	{{range $index, $element := .methods -}}
-	{{.Name}}({{.ParamsString}}) ({{.ReturnsString}}, error)
+	{{.Name}}({{.ParamsString}}) ({{.ReturnsString}}{{if .ReturnsString}}, {{end}}err error)
 	{{end}}
 }`
 
