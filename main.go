@@ -55,9 +55,18 @@ func main() {
 	var elementMapping = wsdl.NewElementMappingFromDefinitions(definitions)
 	fmt.Println(elementMapping)
 
-	generateEntity(definitions, sourcePath)
-	generateInterface(definitions, elementMapping, sourcePath)
-	generateInterfaceImpl(definitions, elementMapping, sourcePath)
+	if err = generateEntity(definitions, sourcePath); err != nil {
+		fmt.Println("Failed to generateEntity")
+		return
+	}
+	if err = generateInterface(definitions, elementMapping, sourcePath); err != nil {
+		fmt.Println("Failed to generateInterface")
+		return
+	}
+	if err = generateInterfaceImpl(definitions, elementMapping, sourcePath); err != nil {
+		fmt.Println("Failed to generateInterfaceImpl")
+		return
+	}
 }
 
 

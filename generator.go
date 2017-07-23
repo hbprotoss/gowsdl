@@ -10,20 +10,22 @@ import (
 	"wsdl2go/util"
 )
 
-func generateInterface(definitions *wsdl.Definitions, mapping *wsdl.ElementMapping, sourceRoot string) {
+func generateInterface(definitions *wsdl.Definitions, mapping *wsdl.ElementMapping, sourceRoot string) (err error) {
 	var portType = definitions.PortType
 	var sourcePath = fmt.Sprintf("%s%s%s.go", sourceRoot, string(os.PathSeparator), portType.Name)
-	if err := gatherInterfaceInfo(definitions, mapping, sourcePath, interfaceTpl); err != nil {
+	if err = gatherInterfaceInfo(definitions, mapping, sourcePath, interfaceTpl); err != nil {
 		fmt.Printf("%v\n", err)
 	}
+	return
 }
 
-func generateInterfaceImpl(definitions *wsdl.Definitions, mapping *wsdl.ElementMapping, sourceRoot string) {
+func generateInterfaceImpl(definitions *wsdl.Definitions, mapping *wsdl.ElementMapping, sourceRoot string) (err error) {
 	var portType = definitions.PortType
 	var sourcePath = fmt.Sprintf("%s%sDefault%s.go", sourceRoot, string(os.PathSeparator), portType.Name)
 	if err := gatherInterfaceInfo(definitions, mapping, sourcePath, implTpl); err != nil {
 		fmt.Printf("%v\n", err)
 	}
+	return
 }
 
 func gatherInterfaceInfo(definitions *wsdl.Definitions, mapping *wsdl.ElementMapping, sourcePath string, tpl *template.Template) (err error) {
@@ -110,7 +112,7 @@ func generateTypeDefs(sequence *wsdl.Sequence) string {
 	return strings.Join(params, ", ")
 }
 
-func generateEntity(definitions *wsdl.Definitions, sourceRoot string) {
+func generateEntity(definitions *wsdl.Definitions, sourceRoot string) (err error) {
 	var complexTypes = definitions.Types.Schema.ComplexType
 	var packageName = filepath.Base(sourceRoot)
 	for _, complexType := range complexTypes {
@@ -132,7 +134,7 @@ func generateEntity(definitions *wsdl.Definitions, sourceRoot string) {
 		file.Close()
 		if err != nil {
 			fmt.Println(err)
-			continue
+			return
 		}
 	}
 }
