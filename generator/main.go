@@ -13,6 +13,7 @@ import (
 var (
 	entityTpl    *template.Template
 	interfaceTpl *template.Template
+	implTpl *template.Template
 )
 
 func Init() (err error) {
@@ -21,6 +22,10 @@ func Init() (err error) {
 		return
 	}
 	interfaceTpl, err = template.New("interfaceTpl").Parse(wsdl.InterfaceTplText)
+	if err != nil {
+		return
+	}
+	implTpl, err = template.New("implTpl").Parse(wsdl.ImplementationTplText)
 	if err != nil {
 		return
 	}
@@ -52,17 +57,23 @@ func main() {
 	generateInterface(definitions, elementMapping, sourcePath)
 }
 
-func generateInterface(definitions *wsdl.Definitions, mapping *wsdl.ElementMapping, sourcePath string) {
+func generateInterface(definitions *wsdl.Definitions, mapping *wsdl.ElementMapping, sourceRoot string) {
 	var portType = definitions.PortType
-	var packageName = filepath.Base(sourcePath)
+	var sourcePath = fmt.Sprintf("%s%s%s.go", sourceRoot, string(os.PathSeparator), portType.Name)
+	if err := gatherInterfaceInfo(definitions, mapping, sourcePath, interfaceTpl); err != nil {
+		fmt.Printf("%v\n", err)
+	}
+}
+
+func gatherInterfaceInfo(definitions *wsdl.Definitions, mapping *wsdl.ElementMapping, sourcePath string, tpl *template.Template) (err error) {
+	var portType = definitions.PortType
+	var packageName = filepath.Base(filepath.Dir(sourcePath))
 	fmt.Printf("Interface name: %s\n", portType.Name)
-	file, err := os.Create(fmt.Sprintf("%s%s%s.go", sourcePath, string(os.PathSeparator), portType.Name))
+	file, err := os.Create(sourcePath)
 	if err != nil {
 		fmt.Printf("generateEntity() error: %v\n", err)
 		return
 	}
-	defer file.Close()
-
 	data := make(map[string]interface{})
 	data["package"] = packageName
 	data["serviceName"] = portType.Name
@@ -71,15 +82,13 @@ func generateInterface(definitions *wsdl.Definitions, mapping *wsdl.ElementMappi
 		methods[index] = generateInterfaceMethod(operation, mapping)
 	}
 	data["methods"] = methods
-	err = interfaceTpl.Execute(file, data)
-	if err != nil {
-		fmt.Println(err)
-	}
+	return tpl.Execute(file, data)
 }
 
 func generateInterfaceMethod(operation *wsdl.Operation, mapping *wsdl.ElementMapping) (method *wsdl.ServiceMethod) {
 	method = &wsdl.ServiceMethod{
 		Name: util.FirstLetterToUpper(operation.Name),
+		Action: operation.Name,
 	}
 	var inputTypeName = util.GetEntityName(operation.Input.Message)
 	var inputType = wsdl.GetType(operation.Input.Message)
@@ -125,13 +134,13 @@ func generateTypeDefs(sequence *wsdl.Sequence) string {
 	return strings.Join(params, ", ")
 }
 
-func generateEntity(definitions *wsdl.Definitions, sourcePath string) {
+func generateEntity(definitions *wsdl.Definitions, sourceRoot string) {
 	var complexTypes = definitions.Types.Schema.ComplexType
-	var packageName = filepath.Base(sourcePath)
+	var packageName = filepath.Base(sourceRoot)
 	for _, complexType := range complexTypes {
 
 		fmt.Printf("Entity name: %s\n", complexType.Name)
-		file, err := os.Create(fmt.Sprintf("%s%s%s.go", sourcePath, string(os.PathSeparator), complexType.Name))
+		file, err := os.Create(fmt.Sprintf("%s%s%s.go", sourceRoot, string(os.PathSeparator), complexType.Name))
 		if err != nil {
 			fmt.Printf("generateEntity() error: %v\n", err)
 			return

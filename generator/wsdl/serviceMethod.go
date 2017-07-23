@@ -4,4 +4,5 @@ type ServiceMethod struct {
 	Name    string
 	Params  string
 	Returns string
+	Action  string
 }
