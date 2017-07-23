@@ -1,6 +1,6 @@
 package wsdl
 
-import "gowsdl/generator/util"
+import "wsdl2go/generator/util"
 
 type ElementMapping struct {
 	ComplexType map[string]*ComplexType

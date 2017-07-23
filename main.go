@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gowsdl/soap/client"
-	"gowsdl/temp"
+	"wsdl2go/soap/client"
+	"wsdl2go/temp"
 )
 
 func main() {

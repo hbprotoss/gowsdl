@@ -6,8 +6,8 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"gowsdl/soap/req"
-	"gowsdl/soap/resp"
+	"wsdl2go/soap/req"
+	"wsdl2go/soap/resp"
 	"io/ioutil"
 	"log"
 	"net"
@@ -85,7 +85,7 @@ func (s *SOAPClient) Call(soapAction string, request req.Request, response inter
 
 	httpReq.Header.Add("Content-Type", "text/xml; charset=\"utf-8\"")
 
-	httpReq.Header.Set("User-Agent", "gowsdl/0.1")
+	httpReq.Header.Set("User-Agent", "wsdl2go/0.1")
 	httpReq.Close = true
 
 	tr := &http.Transport{

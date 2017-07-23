@@ -1,7 +1,7 @@
 package wsdl
 
 import (
-	"gowsdl/generator/util"
+	"wsdl2go/generator/util"
 )
 
 var typeMapping = map[string]string{

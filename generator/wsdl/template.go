@@ -41,8 +41,8 @@ type {{.serviceName}} interface {
 	ImplementationTplText = `package {{.package}}
 import (
 	"fmt"
-	"gowsdl/soap/client"
-	"gowsdl/soap/req"
+	"wsdl2go/soap/client"
+	"wsdl2go/soap/req"
 )
 
 type Default{{.serviceName}} struct {
