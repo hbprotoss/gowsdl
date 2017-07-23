@@ -35,6 +35,11 @@ func Init() (err error) {
 }
 
 func main() {
+	if len(os.Args) != 2 {
+		fmt.Println("Usage: wsdl2go <wsdlUrl> <destFolder>")
+		return
+	}
+
 	if err := Init(); err != nil {
 		fmt.Printf("Init() error: %v\n", err)
 		return
