@@ -196,7 +196,7 @@ func generateEntityMembers(sequence *wsdl.Sequence) (members []wsdl.EntityMember
 		}
 		var member = wsdl.EntityMember{
 			Name:    util.FirstLetterToUpper(element.Name),
-			Type:    "*" + wsdl.GetTypeWithUpperEntity(element.Type),
+			Type:    wsdl.GetTypeWithUpperEntity(element.Type),
 			XmlName: element.Name,
 		}
 		if element.MaxOccurs == "unbounded" {

@@ -54,7 +54,7 @@ func New{{.serviceName}}(url string, auth *client.SecurityAuth) *Default{{.servi
 	}
 }
 {{range $index, $element := .methods }}
-func (s *Default{{$.serviceName}}) {{.Name}}({{.ParamsString}}) ({{.ReturnsString}}, error) {
+func (s *Default{{$.serviceName}}) {{.Name}}({{.ParamsString}}) ({{.ReturnsString}}, err error) {
 	var envelope = req.NewEnvelope()
 
 	var request = New{{.Name}}(s.Namespace)
@@ -63,9 +63,9 @@ func (s *Default{{$.serviceName}}) {{.Name}}({{.ParamsString}}) ({{.ReturnsStrin
 	{{end -}}
 	envelope.Body.Content = request
 
-	var response = New{{.Name}}Response()
+	var response = New{{.Name}}Response(s.Namespace)
 
-	err := s.soapClient.Call("{{.Name | FirstLetterToLower}}", request, response)
+	err = s.soapClient.Call("{{.Name | FirstLetterToLower}}", request, response)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err

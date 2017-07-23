@@ -31,9 +31,9 @@ func GetType(rawType string) string {
 
 func GetTypeWithUpperEntity(rawType string) string {
 	var typeName = util.GetEntityName(rawType)
-	if ret := GetType(rawType); ret != "" {
+	if ret := GetType(typeName); ret != "" {
 		return ret
 	} else {
-		return util.FirstLetterToUpper(typeName)
+		return "*" + util.FirstLetterToUpper(typeName)
 	}
 }
