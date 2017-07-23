@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"wsdl2go/generator/util"
-	"wsdl2go/generator/wsdl"
+	"wsdl2go/util"
+	"wsdl2go/wsdl"
 	"os"
 	"path/filepath"
 	"strings"
