@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"gowsdl/enterprise"
 	"gowsdl/soap/client"
+	"gowsdl/temp"
 )
 
 func main() {
-	var service = enterprise.NewHelloService(
+	var service = temp.NewHelloService(
 		"http://127.0.0.1:8080/ws/hello",
 		&client.SecurityAuth{
 			Username: "client",
