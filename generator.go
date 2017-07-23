@@ -112,7 +112,7 @@ func generateTypeDefs(sequence *wsdl.Sequence) string {
 	return strings.Join(params, ", ")
 }
 
-func generateEntity(definitions *wsdl.Definitions, sourceRoot string) (err error) {
+func generateEntity(definitions *wsdl.Definitions, sourceRoot string) (error) {
 	var complexTypes = definitions.Types.Schema.ComplexType
 	var packageName = filepath.Base(sourceRoot)
 	for _, complexType := range complexTypes {
@@ -121,7 +121,7 @@ func generateEntity(definitions *wsdl.Definitions, sourceRoot string) (err error
 		file, err := os.Create(fmt.Sprintf("%s%s%s.go", sourceRoot, string(os.PathSeparator), complexType.Name))
 		if err != nil {
 			fmt.Printf("generateEntity() error: %v\n", err)
-			return
+			return err
 		}
 
 		data := make(map[string]interface{})
@@ -134,9 +134,10 @@ func generateEntity(definitions *wsdl.Definitions, sourceRoot string) (err error
 		file.Close()
 		if err != nil {
 			fmt.Println(err)
-			return
+			return err
 		}
 	}
+	return nil
 }
 
 func generateEntityMembers(sequence *wsdl.Sequence) (members []wsdl.EntityMember) {
