@@ -23,8 +23,8 @@ type Types struct {
 }
 
 type Schema struct {
-	Element     []Element     `xml:"element"`
-	ComplexType []ComplexType `xml:"complexType"`
+	Element     []*Element     `xml:"element"`
+	ComplexType []*ComplexType `xml:"complexType"`
 }
 
 type ComplexType struct {
@@ -33,7 +33,7 @@ type ComplexType struct {
 }
 
 type Sequence struct {
-	Element []Element `xml:"element"`
+	Element []*Element `xml:"element"`
 }
 
 type Element struct {
@@ -75,8 +75,8 @@ type Port struct {
 }
 
 type PortType struct {
-	Name      string      `xml:"name,attr"`
-	Operation []Operation `xml:"operation"`
+	Name      string       `xml:"name,attr"`
+	Operation []*Operation `xml:"operation"`
 }
 
 func NewDefinitionsFromUrl(url string) (*Definitions, error) {

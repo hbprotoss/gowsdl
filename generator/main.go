@@ -68,7 +68,7 @@ func generateInterface(definitions *wsdl.Definitions, mapping *wsdl.ElementMappi
 	data["serviceName"] = portType.Name
 	var methods = make([]*wsdl.ServiceMethod, len(portType.Operation))
 	for index, operation := range portType.Operation {
-		methods[index] = generateInterfaceMethod(&operation, mapping)
+		methods[index] = generateInterfaceMethod(operation, mapping)
 	}
 	data["methods"] = methods
 	err = interfaceTpl.Execute(file, data)
@@ -79,7 +79,7 @@ func generateInterface(definitions *wsdl.Definitions, mapping *wsdl.ElementMappi
 
 func generateInterfaceMethod(operation *wsdl.Operation, mapping *wsdl.ElementMapping) (method *wsdl.ServiceMethod) {
 	method = &wsdl.ServiceMethod{
-		Name: operation.Name,
+		Name: util.FirstLetterToUpper(operation.Name),
 	}
 	var inputTypeName = util.GetEntityName(operation.Input.Message)
 	var inputType = wsdl.GetType(operation.Input.Message)
@@ -109,13 +109,18 @@ func generateTypeDefs(sequence *wsdl.Sequence) string {
 		var elementType = util.GetEntityName(element.Type)
 		paramType := wsdl.GetType(elementType)
 		if paramType == "" {
+			paramType = util.FirstLetterToUpper(elementType)
 			if element.MaxOccurs == "unbounded" {
-				paramType = "[]" + util.FirstLetterToUpper(elementType)
+				paramType = "[]" + paramType
 			} else {
-				paramType = "*" + util.FirstLetterToUpper(elementType)
+				paramType = "*" + paramType
+			}
+		} else {
+			if element.MaxOccurs == "unbounded" {
+				paramType = "[]" + paramType
 			}
 		}
-		params[index] = fmt.Sprintf("%s %s", util.FirstLetterToLower(elementType), paramType)
+		params[index] = fmt.Sprintf("%s %s", element.Name, paramType)
 	}
 	return strings.Join(params, ", ")
 }
