@@ -10,8 +10,8 @@ func main() {
 	var service = temp.NewHelloService(
 		"http://127.0.0.1:8080/ws/hello",
 		&client.SecurityAuth{
-			Username: "client",
-			Password: "GT666lucknumber",
+			Username: "server",
+			Password: "serverpass",
 			Type:     "PasswordText",
 		},
 	)
