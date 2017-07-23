@@ -12,6 +12,8 @@ type Definitions struct {
 	PortType *PortType `xml:"portType"`
 	Binding  *Binding  `xml:"binding"`
 	Service  *Service  `xml:"service"`
+
+	TargetNamespace string `xml:"targetNamespace,attr"`
 }
 
 type Import struct {
@@ -112,6 +114,9 @@ func NewDefinitionsFromUrl(url string) (*Definitions, error) {
 		}
 		if importDef.PortType != nil {
 			definitions.PortType = importDef.PortType
+		}
+		if importDef.TargetNamespace != "" {
+			definitions.TargetNamespace = importDef.TargetNamespace
 		}
 	}
 	return definitions, nil

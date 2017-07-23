@@ -89,6 +89,7 @@ func gatherInterfaceInfo(definitions *wsdl.Definitions, mapping *wsdl.ElementMap
 	}
 	data := make(map[string]interface{})
 	data["package"] = packageName
+	data["namespace"] = definitions.TargetNamespace
 	data["serviceName"] = portType.Name
 	var methods = make([]*wsdl.ServiceMethod, len(portType.Operation))
 	for index, operation := range portType.Operation {
