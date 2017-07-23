@@ -18,11 +18,11 @@ func NewHelloService(url string, auth *client.SecurityAuth) *DefaultHelloService
 	}
 }
 
-func (s *DefaultHelloService) Hello(message string) (*HelloResponse, error) {
+func (s *DefaultHelloService) Hello(message string) (*HelloResponseData, error) {
 	var envelope = req.NewEnvelope()
+
 	var request = NewHelloRequest(s.Namespace)
 	request.Message = message
-
 	envelope.Body.Content = request
 
 	var response = NewHelloResponse()
@@ -32,6 +32,5 @@ func (s *DefaultHelloService) Hello(message string) (*HelloResponse, error) {
 		fmt.Println(err)
 		return nil, err
 	}
-
-	return response, nil
+	return response.Return, nil
 }

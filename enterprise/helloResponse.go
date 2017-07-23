@@ -5,7 +5,7 @@ import "encoding/xml"
 type HelloResponse struct {
 	XMLName xml.Name `xml:"helloResponse"`
 
-	Return HelloResponseData `xml:"return"`
+	Return *HelloResponseData `xml:"return"`
 }
 
 type HelloResponseData struct {
