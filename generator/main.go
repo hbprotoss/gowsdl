@@ -13,19 +13,23 @@ import (
 var (
 	entityTpl    *template.Template
 	interfaceTpl *template.Template
-	implTpl *template.Template
+	implTpl      *template.Template
 )
 
 func Init() (err error) {
-	entityTpl, err = template.New("entityTpl").Parse(wsdl.EntityTplText)
+	funcMap := template.FuncMap{
+		"FirstLetterToUpper": util.FirstLetterToUpper,
+		"FirstLetterToLower": util.FirstLetterToLower,
+	}
+	entityTpl, err = template.New("entityTpl").Funcs(funcMap).Parse(wsdl.EntityTplText)
 	if err != nil {
 		return
 	}
-	interfaceTpl, err = template.New("interfaceTpl").Parse(wsdl.InterfaceTplText)
+	interfaceTpl, err = template.New("interfaceTpl").Funcs(funcMap).Parse(wsdl.InterfaceTplText)
 	if err != nil {
 		return
 	}
-	implTpl, err = template.New("implTpl").Parse(wsdl.ImplementationTplText)
+	implTpl, err = template.New("implTpl").Funcs(funcMap).Parse(wsdl.ImplementationTplText)
 	if err != nil {
 		return
 	}
@@ -55,12 +59,21 @@ func main() {
 
 	generateEntity(definitions, sourcePath)
 	generateInterface(definitions, elementMapping, sourcePath)
+	generateInterfaceImpl(definitions, elementMapping, sourcePath)
 }
 
 func generateInterface(definitions *wsdl.Definitions, mapping *wsdl.ElementMapping, sourceRoot string) {
 	var portType = definitions.PortType
 	var sourcePath = fmt.Sprintf("%s%s%s.go", sourceRoot, string(os.PathSeparator), portType.Name)
 	if err := gatherInterfaceInfo(definitions, mapping, sourcePath, interfaceTpl); err != nil {
+		fmt.Printf("%v\n", err)
+	}
+}
+
+func generateInterfaceImpl(definitions *wsdl.Definitions, mapping *wsdl.ElementMapping, sourceRoot string) {
+	var portType = definitions.PortType
+	var sourcePath = fmt.Sprintf("%s%sDefault%s.go", sourceRoot, string(os.PathSeparator), portType.Name)
+	if err := gatherInterfaceInfo(definitions, mapping, sourcePath, implTpl); err != nil {
 		fmt.Printf("%v\n", err)
 	}
 }
@@ -88,7 +101,6 @@ func gatherInterfaceInfo(definitions *wsdl.Definitions, mapping *wsdl.ElementMap
 func generateInterfaceMethod(operation *wsdl.Operation, mapping *wsdl.ElementMapping) (method *wsdl.ServiceMethod) {
 	method = &wsdl.ServiceMethod{
 		Name: util.FirstLetterToUpper(operation.Name),
-		Action: operation.Name,
 	}
 	var inputTypeName = util.GetEntityName(operation.Input.Message)
 	var inputType = wsdl.GetType(operation.Input.Message)
@@ -97,7 +109,8 @@ func generateInterfaceMethod(operation *wsdl.Operation, mapping *wsdl.ElementMap
 		if complexType == nil {
 			return nil
 		}
-		method.Params = generateTypeDefs(complexType.Sequence)
+		method.ParamsString = generateTypeDefs(complexType.Sequence)
+		method.ParamNames = generateParams(complexType.Sequence)
 	}
 
 	var outputTypeName = util.GetEntityName(operation.Output.Message)
@@ -107,9 +120,17 @@ func generateInterfaceMethod(operation *wsdl.Operation, mapping *wsdl.ElementMap
 		if complexType == nil {
 			return nil
 		}
-		method.Returns = generateTypeDefs(complexType.Sequence)
+		method.ReturnsString = generateTypeDefs(complexType.Sequence)
 	}
 	return
+}
+
+func generateParams(sequence *wsdl.Sequence) []string {
+	params := make([]string, len(sequence.Element))
+	for index, element := range sequence.Element {
+		params[index] = element.Name
+	}
+	return params
 }
 
 func generateTypeDefs(sequence *wsdl.Sequence) string {
@@ -120,7 +141,7 @@ func generateTypeDefs(sequence *wsdl.Sequence) string {
 		if paramType == "" {
 			paramType = util.FirstLetterToUpper(elementType)
 			if element.MaxOccurs == "unbounded" {
-				paramType = "[]" + paramType
+				paramType = "[]*" + paramType
 			} else {
 				paramType = "*" + paramType
 			}
@@ -129,7 +150,13 @@ func generateTypeDefs(sequence *wsdl.Sequence) string {
 				paramType = "[]" + paramType
 			}
 		}
-		params[index] = fmt.Sprintf("%s %s", element.Name, paramType)
+		var name = ""
+		if strings.Compare(element.Name, "return") == 0 {
+			name = elementType
+		} else {
+			name = element.Name
+		}
+		params[index] = fmt.Sprintf("%s %s", name, paramType)
 	}
 	return strings.Join(params, ", ")
 }

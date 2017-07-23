@@ -1,8 +1,8 @@
 package wsdl
 
 type ServiceMethod struct {
-	Name    string
-	Params  string
-	Returns string
-	Action  string
+	Name          string
+	ParamNames    []string
+	ParamsString  string
+	ReturnsString string
 }
