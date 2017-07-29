@@ -19,7 +19,7 @@ var typeMapping = map[string]string{
 	"int":     "int32",
 	"integer": "int32",
 	"long":    "int64",
-	"decimal": "??",
+	"decimal": "string",
 	// misc
 	"boolean": "bool",
 	"any":     "interface{}",
